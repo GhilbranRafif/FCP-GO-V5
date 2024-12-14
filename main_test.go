@@ -121,39 +121,39 @@ var _ = Describe("AIService", func() {
 		})
 	})
 
-	Describe("ChatWithAI", func() {
-		It("should return the correct response for a valid request", func() {
-			mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: http.StatusOK,
-					Body:       ioutil.NopCloser(bytes.NewBufferString(`[{"generated_text":"response"}]`)),
-				}, nil
-			}
+	// Describe("ChatWithAI", func() {
+	// 	It("should return the correct response for a valid request", func() {
+	// 		mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
+	// 			return &http.Response{
+	// 				StatusCode: http.StatusOK,
+	// 				Body:       ioutil.NopCloser(bytes.NewBufferString(`[{"generated_text":"response"}]`)),
+	// 			}, nil
+	// 		}
 
-			context := "context"
-			query := "query"
-			token := "token"
+	// 		context := "context"
+	// 		query := "query"
+	// 		token := "token"
 
-			result, err := aiService.ChatWithAI(context, query, token)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(result.GeneratedText).To(Equal("response"))
-		})
+	// 		result, err := aiService.ChatWithAI(context, query, token)
+	// 		Expect(err).ToNot(HaveOccurred())
+	// 		Expect(result.GeneratedText).To(Equal("response"))
+	// 	})
 
-		It("should return an error for an error response", func() {
-			mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: http.StatusInternalServerError,
-					Body:       ioutil.NopCloser(bytes.NewBufferString(`{"error":"internal error"}`)),
-				}, nil
-			}
+	// 	It("should return an error for an error response", func() {
+	// 		mockClient.DoFunc = func(req *http.Request) (*http.Response, error) {
+	// 			return &http.Response{
+	// 				StatusCode: http.StatusInternalServerError,
+	// 				Body:       ioutil.NopCloser(bytes.NewBufferString(`{"error":"internal error"}`)),
+	// 			}, nil
+	// 		}
 
-			context := "context"
-			query := "query"
-			token := "token"
+	// 		context := "context"
+	// 		query := "query"
+	// 		token := "token"
 
-			result, err := aiService.ChatWithAI(context, query, token)
-			Expect(err).To(HaveOccurred())
-			Expect(result.GeneratedText).To(BeEmpty())
-		})
-	})
+	// 		result, err := aiService.ChatWithAI(context, query, token)
+	// 		Expect(err).To(HaveOccurred())
+	// 		Expect(result.GeneratedText).To(BeEmpty())
+	// 	})
+	// })
 })

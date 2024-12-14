@@ -49,7 +49,7 @@ function App() {
     //   fontFamily: "Arial, sans-serif",
     // }}
     >
-      <container>
+      <div>
         <Router>
           <Header />
           <Routes>
@@ -57,7 +57,7 @@ function App() {
             <Route path="/service_ai" element={<ServiceAI />} />
           </Routes>
         </Router>
-      </container>
+      </div>
 
       {/* <h1 style={{ color: "#333", marginBottom: "20px" }}>
         Data Analysis Chatbot

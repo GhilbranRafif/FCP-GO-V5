@@ -1,68 +1,102 @@
-/* src/Components/Service/ServiceAI.css */
 .service-ai-container {
   display: flex;
-  justify-content: space-between;
-  padding: 20px;
+  flex-direction: column; /* Keep the main title above */
+  align-items: center; /* Center the title */
+  padding: 100px 20px 60px 20px;
+  background: radial-gradient(
+    circle at bottom,
+    rgb(199, 254, 123) 10%,
+    rgba(255, 255, 255, 1) 70%
+  );
+  height: 180vh;
+}
+
+.outfit-reguler {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.lexend-deca-bold {
+  font-family: "Lexend Deca";
+  font-weight: 700; /* Bold weight */
+}
+
+.main-title {
+  text-align: center; /* Center the title text */
+  font-size: 3rem;
+  font-style: bold; /* Title font size */
+  margin-bottom: 20px; /* Space below the title */
+  color: rgb(0, 55, 32); /* Title text color */
+}
+
+.sections-container {
+  display: flex; /* Use flexbox for side-by-side layout */
+  justify-content: center; /* Center the sections */
+  width: 100%; /* Full width for the sections */
 }
 
 .upload-section,
 .chat-section {
-  width: 48%;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
+  width: 35%; /* Set width to 35% for both sections */
+  background: linear-gradient(
+    to top,
 
-h2 {
-  margin-bottom: 10px;
-  text-align: center;
+    rgba(245, 255, 152, 0.2),
+    rgba(255, 255, 255, 1)
+  ); /* Gradient from white to orange and green */
+  border-radius: 8px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+
+  margin: 0 10px; /* Horizontal margin for spacing */
+  border: #ccc solid;
+}
+.upload-section h2,
+.chat-section h2 {
+  font-size: 24px;
 }
 
 .drop-area {
-  border: 2px dashed #007bff;
+  border: 2px dashed #4caf50;
   border-radius: 8px;
-  padding: 40px;
+  padding: 35px 20px;
   text-align: center;
-  margin-bottom: 10px;
-  transition: background-color 0.3s;
+  margin-bottom: 20px;
 }
 
-.drop-area:hover {
-  background-color: #e9ecef; /* Warna saat hover */
-}
-
-input[type="file"] {
-  display: none; /* Sembunyikan input file */
+.drop-area p {
+  margin: 0;
 }
 
 button {
-  padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
+  padding: 10px 15px;
   cursor: pointer;
+  margin-right: 10px;
   margin-top: 10px;
 }
 
 button:hover {
-  background-color: #0056b3; /* Warna saat hover */
+  background-color: #45a049;
 }
 
 .response,
 .chat-response {
   margin-top: 20px;
   padding: 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: solid 1px #d1d1d1;
+}
+
+input[type="text"] {
+  width: calc(100% - 22px); /* Adjust width to fit the button */
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: #e9ecef;
-}
-.file-info {
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid #007bff;
-  border-radius: 4px;
-  background-color: #e9ecef;
-  text-align: center;
 }

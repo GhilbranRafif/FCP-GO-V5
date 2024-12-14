@@ -2,13 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
-	"math"
 	"net/http"
 	"os"
-	"strconv"
 
 	"a21hc3NpZ25tZW50/service"
 
@@ -47,7 +44,10 @@ func main() {
 	// File upload endpoint
 	router.HandleFunc("/upload", uploadHandler).Methods("POST")
 
-	// Chat endpoint
+	// New analyze endpoint for AI
+	router.HandleFunc("/analyze", analyzeHandler).Methods("POST")
+
+	// New chat endpoint for AI
 	router.HandleFunc("/chat", chatHandler).Methods("POST")
 
 	// Enable CORS
@@ -94,88 +94,68 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Perform manual analysis to find the appliance with the highest and lowest electricity consumption
-	leastElectricity, mostElectricity := analyzeElectricityConsumption(table)
-
-	// Format output
-	output := fmt.Sprintf("From the provided data, here are the Least Electricity: %s and the Most Electricity: %s.", leastElectricity, mostElectricity)
-
-	// Send response
+	// Send response with the table
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": output})
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "File processed successfully.",
+		"table":   table, // Kirim tabel sebagai bagian dari respons
+	})
 }
 
-// Handler for chat
-func chatHandler(w http.ResponseWriter, r *http.Request) {
+// New analyze handler
+func analyzeHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
-		Query string `json:"query"` // Correct JSON tag
+		Table map[string][]string `json:"table"`
+		Query string              `json:"query"`
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		http.Error(w, "Unable to parse request", http.StatusBadRequest)
 		return
 	}
 
-	// Get the context from the session
-	session := getSession(r)
-	context, ok := session.Values["context"].(string) // Ensure type conversion
-	if !ok {
-		context = ""
-	}
-
-	response, err := aiService.ChatWithAI(context, request.Query, os.Getenv("HUGGINGFACE_TOKEN"))
+	// Panggil fungsi AnalyzeData dari AIService
+	response, err := aiService.AnalyzeData(request.Table, request.Query, os.Getenv("HUGGINGFACE_TOKEN"))
 	if err != nil {
-		http.Error(w, "Unable to chat with AI", http.StatusInternalServerError)
+		http.Error(w, "Error analyzing data", http.StatusInternalServerError)
 		return
 	}
 
-	// Save the context to the session
-	session.Values["context"] = response.GeneratedText
-	session.Save(r, w)
-
-	chatResponse := map[string]string{
-		"status": "success",
-		"answer": response.GeneratedText,
-	}
-
+	// Kirim respons
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(chatResponse)
+	json.NewEncoder(w).Encode(map[string]string{"answer": response})
 }
 
-// Function to analyze electricity consumption
-func analyzeElectricityConsumption(table map[string][]string) (string, string) {
-	// Create a map to store total energy consumption per appliance
-	energyMap := make(map[string]float64)
-
-	// Iterate through the data to calculate total energy consumption
-	for i, appliance := range table["Appliance"] {
-		energyStr := table["Energy_Consumption"][i]
-		energyValue, err := strconv.ParseFloat(energyStr, 64) // Ensure this is float64
-		if err != nil {
-			log.Printf("Error parsing energy consumption for %s: %v", appliance, err)
-			continue
-		}
-		energyMap[appliance] += energyValue
+// New chat handler
+func chatHandler(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		Query string `json:"query"`
 	}
 
-	var leastElectricity, mostElectricity string
-	var minConsumption, maxConsumption float64
-	minConsumption = math.MaxFloat64 // Set initial minimum value to maximum float64
+	log.Println("Received request for /chat")
 
-	// Find the appliance with maximum and minimum energy consumption
-	for appliance, consumption := range energyMap {
-		if consumption < minConsumption {
-			minConsumption = consumption
-			leastElectricity = appliance
-		}
-		if consumption > maxConsumption {
-			maxConsumption = consumption
-			mostElectricity = appliance
-		}
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		log.Printf("Error decoding request body: %v", err)
+		http.Error(w, "Unable to parse request", http.StatusBadRequest)
+		return
 	}
 
-	return leastElectricity, mostElectricity
+	log.Printf("Request query: %s", request.Query)
+
+	// Panggil fungsi ChatWithAI dari AIService
+	response, err := aiService.ChatWithAI(request.Query, os.Getenv("HUGGINGFACE_TOKEN"))
+	if err != nil {
+		log.Printf("Error chatting with AI: %v", err)
+		http.Error(w, "Error chatting with AI", http.StatusInternalServerError)
+		return
+	}
+
+	// Kirim respons
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"response": response})
 }
