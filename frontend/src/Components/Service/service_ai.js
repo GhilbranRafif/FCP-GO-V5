@@ -21,6 +21,7 @@ const ServiceAI = () => {
   const handleUpload = async () => {
     if (!file) {
       console.error("No file selected");
+      alert("Please select a file to upload.");
       return;
     }
 
@@ -37,6 +38,10 @@ const ServiceAI = () => {
       setUploadResponse(res.data.message);
     } catch (error) {
       console.error("Error uploading file:", error);
+      alert(
+        "Error uploading file: " +
+          (error.response ? error.response.data : error.message)
+      );
     }
   };
 
@@ -55,6 +60,11 @@ const ServiceAI = () => {
   const handleChat = async () => {
     if (!table) {
       console.error("No table available for analysis");
+      alert("Please upload a file and analyze it first.");
+      return;
+    }
+    if (!queryAI.trim()) {
+      alert("Please enter a question for the AI.");
       return;
     }
 
@@ -70,27 +80,48 @@ const ServiceAI = () => {
         "Error querying chat:",
         error.response ? error.response.data : error.message
       );
+      alert(
+        "Error querying AI: " +
+          (error.response ? error.response.data : error.message)
+      );
     } finally {
       setLoading(false); // Reset loading state
     }
   };
 
   const handleAssistantChat = async () => {
-    if (!queryAssistant) {
-      console.error("No query provided");
+    if (!queryAssistant.trim()) {
+      alert("Please enter a question for the Assistant AI.");
       return;
     }
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:8080/chat", {
+      const response = await axios.post("http://localhost:8080/chat", {
         query: queryAssistant,
+        context: "User context here",
       });
-      setAssistantAIResponse(res.data.response);
+
+      // Tambahkan debug console.log
+      console.log("Full Response:", response);
+      console.log("Response Data:", response.data);
+      console.log("Answer:", response.data.answer);
+
+      setAssistantAIResponse(response.data.answer);
     } catch (error) {
-      console.error(
-        "Error querying assistant chat:",
-        error.response ? error.response.data : error.message
+      console.error("Full Error Object:", error);
+      console.error("Error Response:", error.response);
+
+      // Tambahkan penanganan error yang lebih detail
+      if (error.response) {
+        console.error("Error Data:", error.response.data);
+        console.error("Error Status:", error.response.status);
+      }
+
+      setAssistantAIResponse("Terjadi kesalahan saat berkomunikasi dengan AI.");
+      alert(
+        "Error chatting with AI: " +
+          (error.response ? error.response.data : error.message)
       );
     } finally {
       setLoading(false);
@@ -146,7 +177,9 @@ const ServiceAI = () => {
             onChange={(e) => setQueryAI(e.target.value)}
             placeholder="Ask a question..."
           />
-          <button onClick={handleChat}>Send</button>
+          <button onClick={handleChat} disabled={loading}>
+            Send
+          </button>
           {loading && <p>Loading...</p>} {/* Loading indicator */}
           <div className="chat-response">
             <h3>AI Response</h3>
@@ -164,7 +197,7 @@ const ServiceAI = () => {
         className="description lexend-deca-regular"
         style={{ textAlign: "center" }}
       >
-        Saya menggunakan model AI QwQ-32B-Preview Sebagai Asisten AI yang dapat
+        Saya menggunakan model AI Phi-3.5 sebagai Asisten AI yang dapat
         berkomunikasi <br></br>secara langsung dengan Pengguna
       </p>
 
@@ -177,7 +210,9 @@ const ServiceAI = () => {
           onChange={(e) => setQueryAssistant(e.target.value)}
           placeholder="Tanyakan sesuatu..."
         />
-        <button onClick={handleAssistantChat}>Kirim</button>
+        <button onClick={handleAssistantChat} disabled={loading}>
+          Kirim
+        </button>
         {loading && <p>Loading...</p>} {/* Loading indicator */}
         <div className="chat-response">
           <h3>Respons AI</h3>

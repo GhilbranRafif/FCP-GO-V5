@@ -132,30 +132,24 @@ func analyzeHandler(w http.ResponseWriter, r *http.Request) {
 // New chat handler
 func chatHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
-		Query string `json:"query"`
+		Query   string `json:"query"`
+		Context string `json:"context"`
 	}
 
-	log.Println("Received request for /chat")
-
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		log.Printf("Error decoding request body: %v", err)
-		http.Error(w, "Unable to parse request", http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	log.Printf("Request query: %s", request.Query)
+	token := os.Getenv("HUGGINGFACE_TOKEN")
 
-	// Panggil fungsi ChatWithAI dari AIService
-	response, err := aiService.ChatWithAI(request.Query, os.Getenv("HUGGINGFACE_TOKEN"))
+	response, err := aiService.ChatWithAI(request.Context, request.Query, token)
 	if err != nil {
-		log.Printf("Error chatting with AI: %v", err)
-		http.Error(w, "Error chatting with AI", http.StatusInternalServerError)
+		log.Printf("Error calling AI service: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Kirim respons
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"response": response})
+	json.NewEncoder(w).Encode(map[string]string{"answer": response})
 }

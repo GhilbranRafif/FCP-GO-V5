@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -17,6 +16,11 @@ type HTTPClient interface {
 
 type AIService struct {
 	Client HTTPClient
+}
+type ChatResponse struct {
+	Choices []struct {
+		Message string `json:"message"`
+	} `json:"choices"`
 }
 
 func (s *AIService) AnalyzeData(table map[string][]string, query, token string) (string, error) {
@@ -64,63 +68,50 @@ func (s *AIService) AnalyzeData(table map[string][]string, query, token string) 
 	return response.Cells[0], nil
 }
 
-func (s *AIService) ChatWithAI(query, token string) (string, error) {
-	log.Printf("Received query: %s", query)
+func (s *AIService) ChatWithAI(context, query, token string) (string, error) {
+	modelUrl := "https://api-inference.huggingface.co/models/microsoft/Phi-3.5-mini-instruct"
 
-	// Modify the request body to match the expected format
-	requestBody := map[string]interface{}{
-		"inputs": query, // Change this to send query directly as a string
+	// Buat payload sesuai format yang diharapkan
+	payload := map[string]interface{}{
+		"inputs": query, // Gunakan query langsung sebagai input
 		"parameters": map[string]interface{}{
-			"max_new_tokens": 512,
-			"stream":         false,
+			"max_new_tokens":   500,
+			"return_full_text": false,
 		},
 	}
 
-	reqBody, err := json.Marshal(requestBody)
+	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
-		log.Printf("Error marshaling request body: %v", err)
 		return "", err
 	}
 
-	log.Printf("Request Body: %s", string(reqBody))
-
-	modelUrl := "https://api-inference.huggingface.co/models/Qwen/QwQ-32B-Preview"
-	req, err := http.NewRequest("POST", modelUrl, bytes.NewReader(reqBody))
+	req, err := http.NewRequest("POST", modelUrl, bytes.NewBuffer(jsonPayload))
 	if err != nil {
-		log.Printf("Error creating request: %v", err)
 		return "", err
 	}
-
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := s.Client.Do(req)
 	if err != nil {
-		log.Printf("Error making request to AI model: %v", err)
 		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		log.Printf("API returned error: %s, Body: %s", resp.Status, body)
-		return "", fmt.Errorf("API returned error: %s, Body: %s", resp.Status, body)
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("API returned error: %s, body: %s", resp.Status, string(bodyBytes))
 	}
 
-	// Modify the response parsing based on the actual response structure
-	var response []struct {
-		Generated_text string `json:"generated_text"`
+	// Ubah struktur respons untuk menangani format model
+	var responses []map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&responses); err != nil {
+		return "", fmt.Errorf("error decoding response: %v", err)
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
-		log.Printf("Error decoding response: %v", err)
-		return "", err
+	if len(responses) > 0 && responses[0]["generated_text"] != nil {
+		return responses[0]["generated_text"].(string), nil
 	}
 
-	if len(response) == 0 {
-		return "", errors.New("no response from AI model")
-	}
-
-	return response[0].Generated_text, nil
+	return "", errors.New("no valid response from AI model")
 }
