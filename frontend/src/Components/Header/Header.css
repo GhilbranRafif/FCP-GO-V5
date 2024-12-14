@@ -1,0 +1,48 @@
+/* src/components/Header/Header.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: white; /* Warna latar belakang */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Bayangan untuk efek kedalaman */
+  position: fixed; /* Membuat header tetap di atas */
+  top: 20px; /* Jarak dari atas */
+  left: 50%; /* Memposisikan dari kiri */
+  transform: translateX(-50%); /* Menggeser ke kiri setengah lebar header */
+  border-radius: 20px; /* Sudut melengkung */
+  z-index: 1000; /* Pastikan header berada di atas komponen lainnya */
+  width: fit-content; /* Lebar sesuai dengan konten */
+  padding: 10px 30px; /* Padding untuk header */
+  border: solid 2px #95a5a65c;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #27ae60; /* Warna logo */
+  margin-right: 40px;
+  text-decoration: none;
+  transition: text-decoration 0.3s linear;
+}
+
+.logo:hover {
+  text-decoration: underline;
+}
+
+.nav {
+  display: flex;
+  gap: 20px; /* Jarak antara item navigasi */
+}
+
+.nav a {
+  text-decoration: none; /* Menghilangkan garis bawah */
+  color: #333; /* Warna teks */
+}
+
+.notification {
+  background-color: #27ae60; /* Warna latar belakang notifikasi */
+  color: white; /* Warna teks notifikasi */
+  border-radius: 50%; /* Membuat notifikasi berbentuk bulat */
+  padding: 2px 6px; /* Padding untuk notifikasi */
+}
