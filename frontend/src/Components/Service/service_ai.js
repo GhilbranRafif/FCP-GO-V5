@@ -157,8 +157,12 @@ const ServiceAI = () => {
               ref={fileInputRef}
               style={{ display: "none" }}
             />
-            <button onClick={openFileDialog}>Select a file</button>
-            <button onClick={handleUpload}>Upload</button>
+            <button className="outfit-reguler" onClick={openFileDialog}>
+              Select a file
+            </button>
+            <button className="outfit-reguler" onClick={handleUpload}>
+              Upload
+            </button>
           </div>
           <div className="response">
             <h3>Upload Response</h3>
@@ -168,8 +172,8 @@ const ServiceAI = () => {
         <div className="chat-section">
           <h2>Chat with AI</h2>
           <p className="ai-description">
-            This AI helps you analyze the data from your uploaded file and
-            answer your queries based on that data.
+            AI ini akan menganalisa data melalui file yang kamu Upload dan
+            menjawab berdasarkan data nya
           </p>
           <input
             type="text"
@@ -177,12 +181,16 @@ const ServiceAI = () => {
             onChange={(e) => setQueryAI(e.target.value)}
             placeholder="Ask a question..."
           />
-          <button onClick={handleChat} disabled={loading}>
+          <button
+            className="outfit-reguler"
+            onClick={handleChat}
+            disabled={loading}
+          >
             Send
           </button>
           {loading && <p>Loading...</p>} {/* Loading indicator */}
           <div className="chat-response">
-            <h3>AI Response</h3>
+            <h3>Response AI</h3>
             <p>{aiResponse}</p>
           </div>
         </div>
@@ -203,14 +211,18 @@ const ServiceAI = () => {
 
       {/* Tambahan untuk input ChatHandler */}
       <div className="chat-handler">
-        <h2>Chat dengan Asisten AI</h2>
+        <h2>Apa yang bisa saya bantu ?</h2>
         <input
           type="text"
           value={queryAssistant}
           onChange={(e) => setQueryAssistant(e.target.value)}
           placeholder="Tanyakan sesuatu..."
         />
-        <button onClick={handleAssistantChat} disabled={loading}>
+        <button
+          className="outfit-reguler"
+          onClick={handleAssistantChat}
+          disabled={loading}
+        >
           Kirim
         </button>
         {loading && <p>Loading...</p>} {/* Loading indicator */}

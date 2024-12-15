@@ -63,7 +63,7 @@
   border-radius: 8px;
   padding: 35px 20px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 35px;
 }
 
 .drop-area p {
@@ -88,15 +88,57 @@ button:hover {
 .response,
 .chat-response {
   margin-top: 20px;
-  padding: 10px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: solid 1px #d1d1d1;
+  padding: 15px; /* Tambahkan padding untuk ruang yang lebih besar */
+  background-color: #ffffff; /* Warna latar belakang putih */
+  border-radius: 10px 25px; /* Sudut yang lebih halus */
+  border: solid 1px #d1d1d1; /* Border yang halus */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Bayangan untuk efek kedalaman */
+  transition: transform 0.3s, box-shadow 0.3s; /* Transisi halus */
+}
+
+.response:hover,
+.chat-response:hover {
+  transform: translateY(-2px); /* Efek angkat saat hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Bayangan lebih dalam saat hover */
+}
+
+.response p,
+.chat-response p {
+  margin: 0; /* Hapus margin default */
+  font-size: 16px; /* Ukuran font yang lebih besar */
+  color: #333; /* Warna teks yang lebih gelap untuk kontras */
+}
+
+.chat-response h3,
+.response h3 {
+  background-color: rgba(76, 175, 80, 0.3); /* Warna hijau dengan opacity */
+  color: #4caf50; /* Warna teks hijau gelap */
+  padding: 10px 20px; /* Tambahkan padding untuk ruang di dalam */
+  border-radius: 20px; /* Sudut yang lebih bulat */
+  margin-top: 10px; /* Hapus margin default */
+  display: inline-block; /* Membuat elemen inline-block */
+  font-weight: bold; /* Menebalkan teks */
+  text-align: center; /* Pusatkan teks */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan untuk efek kedalaman */
 }
 
 input[type="text"] {
-  width: calc(100% - 22px); /* Adjust width to fit the button */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: calc(100% - 22px); /* Sesuaikan lebar untuk mengakomodasi padding */
+  padding: 15px; /* Tambahkan padding untuk ruang yang lebih besar */
+  border: 1px solid #ccc; /* Border yang lebih halus */
+  border-radius: 10px 25px 25px 10px; /* Membuat sudut lebih bulat */
+  font-size: 16px; /* Ukuran font yang lebih besar */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan untuk efek kedalaman */
+  transition: border-color 0.3s; /* Transisi halus untuk perubahan border */
+}
+
+input[type="text"]:focus {
+  border-color: #4caf50; /* Ubah warna border saat fokus */
+  outline: none; /* Hapus outline default */
+}
+
+.chat-handler {
+  align-items: center;
+  width: 90vh;
+  max-width: 100vh;
 }

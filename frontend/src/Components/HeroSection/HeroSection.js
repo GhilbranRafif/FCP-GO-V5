@@ -1,6 +1,7 @@
 // src/components/HeroSection/HeroSection.js
 import React from "react";
 import "./HeroSection.css"; // Pastikan untuk membuat file CSS ini
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -10,20 +11,22 @@ const HeroSection = () => {
           Welcome to My Final Project Page
         </h1>
         <h1 className="hero-title outfit-reguler">
-          The <span className="highlight">AI notepad</span> for people in
+          The <span className="highlight">AI Assistant</span> for your
           <br />
-          back-to-back meetings
+          Smart Home
         </h1>
         <p className="hero-description lexend-deca-regular">
-          Granola takes your raw meeting notes and makes them awesome
+          Asisten AI mu yang dapat mengoptimalkan pengalaman <br></br> rumah
+          pintar Anda dengan teknologi canggih.
         </p>
         <button className="cta-button lexend-deca-bold">
-          Join the Windows waitlist
+          <Link
+            to="/service_ai"
+            style={{ color: "inherit", textDecoration: "none" }}
+          >
+            Cobain Sekarang !!
+          </Link>
         </button>
-        <p className="note lexend-deca-regular">
-          Granola is Mac-only for now. We can let you know when it's ready for
-          Windows.
-        </p>
       </div>
 
       <div className="dummy-container">
