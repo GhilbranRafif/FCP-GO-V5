@@ -32,7 +32,7 @@ const HeroSection = () => {
       <div className="dummy-container">
         <div className="before-ai">
           <h2>Sebelum pake AI ini 😔</h2>
-          <div className="notes-transcript">
+          {/* <div className="notes-transcript">
             <h2>Your notes + transcript</h2>
             <div className="transcript">
               <h3>Intro call: AllFound</h3>
@@ -45,12 +45,12 @@ const HeroSection = () => {
                 <li>“A priority for Q2”</li>
               </ul>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="after-ai">
           <h2>Setelah pake AI ini 🤩 </h2>
-          <div className="notes-transcript">
+          {/* <div className="notes-transcript">
             <h2>Your notes + transcript</h2>
             <div className="transcript">
               <h3>Intro call: AllFound</h3>
@@ -63,7 +63,7 @@ const HeroSection = () => {
                 <li>“A priority for Q2”</li>
               </ul>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

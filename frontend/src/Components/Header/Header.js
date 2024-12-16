@@ -11,8 +11,6 @@ const Header = () => {
       </Link>
       <nav className="nav">
         <Link to="/service_ai">AI</Link>
-        <a href="#blog">Blog</a>
-        <a href="#careers">Careers</a>
       </nav>
     </header>
   );
