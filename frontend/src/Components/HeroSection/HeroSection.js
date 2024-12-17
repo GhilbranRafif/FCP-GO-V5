@@ -32,38 +32,30 @@ const HeroSection = () => {
       <div className="dummy-container">
         <div className="before-ai">
           <h2>Sebelum pake AI ini 😔</h2>
-          {/* <div className="notes-transcript">
-            <h2>Your notes + transcript</h2>
+          <div className="notes-transcript">
+            <h2>Ribet bangett</h2>
             <div className="transcript">
-              <h3>Intro call: AllFound</h3>
-              <p>3:30pm</p>
-              <p>Jess +1</p>
               <ul>
-                <li>100, growing</li>
-                <li>Use tuesday.ai, v manual</li>
-                <li>180</li>
-                <li>“A priority for Q2”</li>
+                <li>Searching secara manual</li>
+                <li>Ngitung pemakaian energi manual</li>
+                <li>Ngumpulin data nya manual </li>
               </ul>
             </div>
-          </div> */}
+          </div>
         </div>
 
         <div className="after-ai">
           <h2>Setelah pake AI ini 🤩 </h2>
-          {/* <div className="notes-transcript">
-            <h2>Your notes + transcript</h2>
+          <div className="notes-transcript">
+            <h2>Praktis dan Simpel</h2>
             <div className="transcript">
-              <h3>Intro call: AllFound</h3>
-              <p>3:30pm</p>
-              <p>Jess +1</p>
               <ul>
-                <li>100, growing</li>
-                <li>Use tuesday.ai, v manual</li>
-                <li>180</li>
-                <li>“A priority for Q2”</li>
+                <li>Pakai AI untuk tau energi yg dipakai </li>
+                <li>Tanya ke AI langsung dapet jawabannya</li>
+                <li>AI yang bantu Hitung Pemakaian energi</li>
               </ul>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
