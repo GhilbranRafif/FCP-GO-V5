@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import "./ServiceAI.css";
+import "./ApplianceUsage.css";
 
 const ServiceAI = () => {
   const [file, setFile] = useState(null);
@@ -10,8 +11,10 @@ const ServiceAI = () => {
   const [aiResponse, setAIResponse] = useState(""); // Respons untuk analisis data
   const [assistantAIResponse, setAssistantAIResponse] = useState(""); // Respons untuk asisten AI
   const [table, setTable] = useState(null);
-  const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(false); // State untuk loading
+  const [electricityResponse, setElectricityResponse] = useState(""); // Respons untuk analisis konsumsi energi
+  const fileInputRef = useRef(null);
+  const [applianceUsage, setApplianceUsage] = useState([]); // State untuk menyimpan penggunaan alat
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -36,6 +39,8 @@ const ServiceAI = () => {
       });
       setTable(res.data.table);
       setUploadResponse(res.data.message);
+      // Panggil analisis konsumsi energi setelah upload berhasil
+      await handleElectricityAnalysis(res.data.table);
     } catch (error) {
       console.error("Error uploading file:", error);
       alert(
@@ -102,22 +107,9 @@ const ServiceAI = () => {
         context: "User context here",
       });
 
-      // Tambahkan debug console.log
-      console.log("Full Response:", response);
-      console.log("Response Data:", response.data);
-      console.log("Answer:", response.data.answer);
-
       setAssistantAIResponse(response.data.answer);
     } catch (error) {
-      console.error("Full Error Object:", error);
-      console.error("Error Response:", error.response);
-
-      // Tambahkan penanganan error yang lebih detail
-      if (error.response) {
-        console.error("Error Data:", error.response.data);
-        console.error("Error Status:", error.response.status);
-      }
-
+      console.error("Error chatting with AI:", error);
       setAssistantAIResponse("Terjadi kesalahan saat berkomunikasi dengan AI.");
       alert(
         "Error chatting with AI: " +
@@ -126,6 +118,76 @@ const ServiceAI = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleElectricityAnalysis = async (uploadedTable) => {
+    if (!uploadedTable) {
+      alert("Please upload a file and analyze it first.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/electricity-consumption",
+        {
+          table: uploadedTable,
+        }
+      );
+      setElectricityResponse(
+        `Least Electricity: ${response.data.leastElectricity}, Most Electricity: ${response.data.mostElectricity}`
+      );
+      const usageData = calculateUsage(uploadedTable);
+      setApplianceUsage(usageData);
+    } catch (error) {
+      console.error("Error analyzing electricity consumption:", error);
+      alert(
+        "Error analyzing electricity consumption: " +
+          (error.response ? error.response.data : error.message)
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateUsage = (table) => {
+    const usageMap = {};
+
+    // Iterasi melalui data untuk menghitung jam penggunaan dan total konsumsi energi
+    for (let i = 0; i < table["Appliance"].length; i++) {
+      const appliance = table["Appliance"][i];
+      const status = table["Status"][i];
+      const energyConsumption = parseFloat(table["Energy_Consumption"][i]);
+
+      if (!usageMap[appliance]) {
+        usageMap[appliance] = { hours: 0, totalConsumption: 0 };
+      }
+
+      // Hitung jam penggunaan jika status "On"
+      if (status === "On") {
+        usageMap[appliance].hours += 1; // Asumsikan setiap entri adalah satu jam
+        // Tambahkan konsumsi energi hanya jika status "On"
+        usageMap[appliance].totalConsumption += energyConsumption;
+      }
+    }
+
+    // Ubah format menjadi array untuk ditampilkan
+    return Object.entries(usageMap).map(([appliance, data]) => ({
+      appliance,
+      hours: data.hours,
+      totalConsumption: data.totalConsumption,
+    }));
+  };
+
+  const ApplianceUsageCard = ({ appliance, hours, totalConsumption }) => {
+    const roundedConsumption = totalConsumption.toFixed(2);
+    return (
+      <div className="appliance-usage-card">
+        <h3>{appliance}</h3>
+        <p>Aktif Selama: {hours} Jam</p>
+        <p>Total Pemakaian: {roundedConsumption} kWh</p>
+      </div>
+    );
   };
 
   const openFileDialog = () => {
@@ -200,36 +262,30 @@ const ServiceAI = () => {
           margin: "10vh",
         }}
       ></div>
-      <h1 className="main-title lexend-deca-bold">Chat With Assistant AI</h1>
-      <p
-        className="description lexend-deca-regular"
-        style={{ textAlign: "center" }}
-      >
-        Saya menggunakan model AI Phi-3.5 sebagai Asisten AI yang dapat
-        berkomunikasi <br></br>secara langsung dengan Pengguna
-      </p>
+      <h1 className="main-title lexend-deca-bold">Smart Home Data Summary</h1>
+      <div className="separator"></div>
 
-      {/* Tambahan untuk input ChatHandler */}
-      <div className="chat-handler">
-        <h2>Apa yang bisa saya bantu ?</h2>
-        <input
-          type="text"
-          value={queryAssistant}
-          onChange={(e) => setQueryAssistant(e.target.value)}
-          placeholder="Tanyakan sesuatu..."
-        />
-        <button
-          className="outfit-reguler"
-          onClick={handleAssistantChat}
-          disabled={loading}
-        >
-          Kirim
-        </button>
-        {loading && <p>Loading...</p>} {/* Loading indicator */}
-        <div className="chat-response">
-          <h3>Respons AI</h3>
-          <p>{assistantAIResponse}</p>
-        </div>
+      {/* Respons untuk analisis konsumsi energi */}
+      <div className="appliance-usage">
+        {applianceUsage.length > 0 ? (
+          <div className="appliance-usage-list">
+            {applianceUsage.map((usage, index) => (
+              <ApplianceUsageCard
+                key={index}
+                appliance={usage.appliance}
+                hours={usage.hours}
+                totalConsumption={usage.totalConsumption}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="no-data-message">
+            <i className="fas fa-exclamation-circle"></i>{" "}
+            {/* Ikon dari Font Awesome */}
+            <h3>Tidak ada data penggunaan alat.</h3>
+            <p>Silakan upload file untuk melihat informasi penggunaan alat.</p>
+          </div>
+        )}
       </div>
     </div>
   );

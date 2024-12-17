@@ -5,6 +5,7 @@ import HeroSection from "./Components/HeroSection/HeroSection";
 import Header from "./Components/Header/Header";
 
 import ServiceAI from "./Components/Service/service_ai";
+import ChatAssistantAI from "./Components/Service/AsistantAI";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HeroSection />} />
             <Route path="/service_ai" element={<ServiceAI />} />
+            <Route path="/AsistantAI" element={<ChatAssistantAI />} />
           </Routes>
         </Router>
       </div>

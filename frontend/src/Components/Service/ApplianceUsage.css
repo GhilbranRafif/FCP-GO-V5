@@ -1,0 +1,77 @@
+.appliance-usage {
+  margin-top: 20px;
+}
+
+.appliance-usage-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Jarak antar kartu */
+}
+
+.appliance-usage-card {
+  background-color: #f9f9f9; /* Warna latar belakang putih */
+  border: 1px solid #e0e0e0; /* Garis border */
+  border-radius: 12px; /* Sudut melengkung */
+  padding: 20px; /* Ruang dalam */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Bayangan */
+  width: 220px; /* Lebar tetap untuk kartu */
+  transition: transform 0.3s, box-shadow 0.3s; /* Transisi untuk efek hover */
+  text-align: left; /* Rata tengah */
+  margin: 10px; /* Margin antar kartu */
+}
+
+.appliance-usage-card:hover {
+  transform: translateY(-5px); /* Efek mengangkat saat hover */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Bayangan lebih dalam saat hover */
+}
+
+.appliance-usage-card h3 {
+  background-color: rgba(76, 175, 80, 0.3); /* Warna hijau dengan opacity */
+  color: #4caf50; /* Warna teks hijau gelap */
+  padding: 10px 20px; /* Tambahkan padding untuk ruang di dalam */
+  border-radius: 20px; /* Sudut yang lebih bulat */
+  margin-top: 10px; /* Hapus margin default */
+  display: inline-block; /* Membuat elemen inline-block */
+  font-weight: bold; /* Menebalkan teks */
+  text-align: center; /* Pusatkan teks */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan untuk efek kedalaman */
+}
+
+.appliance-usage-card p {
+  margin: 5px 0; /* Margin atas dan bawah */
+  font-size: 1em; /* Ukuran font */
+  color: #666; /* Warna teks */
+  font-style: normal;
+}
+
+.separator {
+  height: 5px; /* Tinggi garis */
+  background-color: rgba(76, 175, 80, 0.3); /* Warna garis */
+  margin: 10px 0; /* Margin atas dan bawah */
+  width: 50rem;
+}
+
+.no-data-message {
+  background-color: #f6fae0; /* Warna latar belakang */
+  border: 1px solid #f2efb2; /* Garis border */
+  border-radius: 8px; /* Sudut melengkung */
+  padding: 20px; /* Ruang dalam */
+  text-align: center; /* Rata tengah */
+  margin: 20px 0; /* Margin atas dan bawah */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bayangan */
+}
+
+.no-data-message h3 {
+  margin: 10px 0; /* Margin atas dan bawah */
+  font-weight: bold; /* Tebal */
+}
+
+.no-data-message p {
+  margin: 5px 0; /* Margin atas dan bawah */
+  color: #555; /* Warna teks */
+}
+
+.no-data-message i {
+  font-size: 24px; /* Ukuran ikon */
+  color: #ff9800; /* Warna ikon */
+}

@@ -10,7 +10,8 @@ const Header = () => {
         SmartHome
       </Link>
       <nav className="nav">
-        <Link to="/service_ai">AI</Link>
+        <Link to="/service_ai">Tools AI</Link>
+        <Link to="/AsistantAI">Chat AI</Link>
       </nav>
     </header>
   );

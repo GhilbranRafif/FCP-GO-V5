@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"os"
+	"strconv"
 
 	"a21hc3NpZ25tZW50/service"
 
@@ -49,6 +51,9 @@ func main() {
 
 	// New chat endpoint for AI
 	router.HandleFunc("/chat", chatHandler).Methods("POST")
+
+	// New endpoint for analyzing electricity consumption
+	router.HandleFunc("/electricity-consumption", electricityConsumptionHandler).Methods("POST")
 
 	// Enable CORS
 	corsHandler := cors.New(cors.Options{
@@ -129,6 +134,30 @@ func analyzeHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"answer": response})
 }
 
+// New handler for electricity consumption analysis
+func electricityConsumptionHandler(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		Table map[string][]string `json:"table"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, "Unable to parse request", http.StatusBadRequest)
+		return
+	}
+
+	// Panggil fungsi analyzeElectricityConsumption
+	leastElectricity, mostElectricity := analyzeElectricityConsumption(request.Table)
+
+	// Kirim respons
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"leastElectricity": leastElectricity,
+		"mostElectricity":  mostElectricity,
+	})
+}
+
 // New chat handler
 func chatHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
@@ -152,4 +181,40 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"answer": response})
+}
+
+// Function to analyze electricity consumption
+func analyzeElectricityConsumption(table map[string][]string) (string, string) {
+	// Create a map to store total energy consumption per appliance
+	energyMap := make(map[string]float64)
+
+	// Iterate through the data to calculate total energy consumption
+	for i, appliance := range table["Appliance"] {
+		energyStr := table["Energy_Consumption"][i]
+		energyValue, err := strconv.ParseFloat(energyStr, 64) // Ensure this is float64
+		if err != nil {
+			log.Printf("Error parsing energy consumption for %s: %v", appliance, err)
+			continue // Skip this entry if there's an error
+		}
+		energyMap[appliance] += energyValue
+	}
+
+	// Initialize variables to store the appliance with the highest and lowest energy consumption
+	var leastElectricity, mostElectricity string
+	var minConsumption, maxConsumption float64
+	minConsumption = math.MaxFloat64 // Set initial minimum value to maximum float64
+
+	// Find the appliance with maximum and minimum energy consumption
+	for appliance, consumption := range energyMap {
+		if consumption < minConsumption {
+			minConsumption = consumption
+			leastElectricity = appliance
+		}
+		if consumption > maxConsumption {
+			maxConsumption = consumption
+			mostElectricity = appliance
+		}
+	}
+
+	return leastElectricity, mostElectricity
 }
